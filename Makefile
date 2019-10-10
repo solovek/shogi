@@ -2,7 +2,7 @@ CC  = gcc
 EXE = shogi 
 OBJ = $(shell find . -name "*.cc")
 
-DEP = ncurses
+DEP = ncursesw
 
 CFLAG = `pkg-config $(DEP) --cflags`
 LFLAG = `pkg-config $(DEP) --libs`
