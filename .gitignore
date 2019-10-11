@@ -4,6 +4,7 @@
 *.log
 *.bbl
 *.blg
+sbc-template.sty
 
 # Executable
 shogi

@@ -1,0 +1,46 @@
+% author: Matheus Figueiredo
+
+\documentclass[12pt]{article}
+
+\usepackage{standalone}
+\usepackage{sbc-template}
+\usepackage[utf8]{inputenc}
+\usepackage[brazil]{babel}
+\usepackage{tikz}
+\usetikzlibrary {automata, positioning, arrows}
+
+\title{shogi}
+\author{Matheus Figueiredo}
+\address{Curso de Bacharelado em Ciência da Computação\\
+  Universidade Federal de Pelotas (UFPel)
+  \email{matheusfschmalfuss@inf.ufpel.edu.br}
+}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+\end{abstract}
+
+\begin{resumo}
+  escreva-me
+\end{resumo}
+
+\newpage
+\section{Protocolo}
+\includestandalone{state-machine}
+
+\section{Mensagens}
+\begin{itemize}
+\item b[board]: host envia posição das peças ao outro jogador;
+\item mv[yx][yx]: descreve ao outro jogador que deve checar a sua validade o movimento desejado;
+\item dp[p][yx]: jogador põe uma peça "p" no tabuleiro;
+\item invalid: informa ao outro jogador que a última jogada recebida é inválida;
+\item connect: jogador pede pra se conectar ao host;
+\item resign: jogador concede a vitória (também usado quando há cheque mate).
+\end{itemize}
+
+\bibliographystyle{sbc}
+\bibliography{sbc-template}
+
+\end{document}
