@@ -86,13 +86,19 @@ int main (int argc, char** argv)
 
 int shogi_loop ()
 {
-  for(;;) {
-    getch();
+  char* inp;
 
+  inp = (char*)calloc(64, sizeof(char));
+  
+  for(;;) {
     wrefresh(dropwnd[0]);
     wrefresh(dropwnd[1]);
     wrefresh(boardwnd);    
     refresh();
+
+    mvgetnstr(20, 1, inp, 64);
+
+    
   }
 }
 
