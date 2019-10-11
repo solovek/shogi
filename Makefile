@@ -10,3 +10,9 @@ INCL  = -Iinclude
 
 all:
 	$(CC) -o $(EXE) $(OBJ) $(CFLAG) $(INCL) $(LFLAG)
+
+test: all
+	./shogi
+
+report: 
+	pdflatex report.tex
