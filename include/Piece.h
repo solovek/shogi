@@ -34,11 +34,6 @@ namespace shogi {
   inline char Piece::type (void) {return mtype;}
   inline char Piece::y    (void) {return my;}
   inline char Piece::x    (void) {return mx;}
-
-  enum {
-    SEARCH_POS,
-    SEARCH_TYPE
-  };
 }
 
 #endif /* PIECES_H */
