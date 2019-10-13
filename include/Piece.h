@@ -22,16 +22,23 @@ namespace shogi {
     char print  (void);
     bool exists (void);
 
-    char y (void);
-    char x (void);
+    char type (void);
+    char y    (void);
+    char x    (void);
     
   private:
-    char type;
+    char mtype;
     char my, mx;
   };
 
-  inline char Piece::y (void) {return my;}
-  inline char Piece::x (void) {return mx;}
+  inline char Piece::type (void) {return mtype;}
+  inline char Piece::y    (void) {return my;}
+  inline char Piece::x    (void) {return mx;}
+
+  enum {
+    SEARCH_POS,
+    SEARCH_TYPE
+  };
 }
 
 #endif /* PIECES_H */

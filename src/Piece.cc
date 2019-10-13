@@ -15,9 +15,9 @@ namespace shogi {
 
 shogi::Piece::Piece (char t, char y, char x)
 {
-  type = t;
-  my   = y;
-  mx   = x;
+  mtype = t;
+  my    = y;
+  mx    = x;
 }
 
 static bool within (int n, int lwr, int upr);
@@ -26,7 +26,7 @@ bool shogi::Piece::move (Piece* ctx, char y, char x)
 {
   if (within(y, 0, 9) &&
       within(x, 0, 9) &&
-      piece_types[this->type].valid_move(this, y, x)) {
+      piece_types[this->mtype].valid_move(this, y, x)) {
     my = y;
     mx = x;
     return true;
@@ -43,12 +43,12 @@ static bool within (int n, int lwr, int upr)
 
 char shogi::Piece::print (void)
 {
-  return piece_types[this->type].tile;
+  return piece_types[this->mtype].tile;
 }
 
 bool shogi::Piece::exists (void)
 {
-  return this->type;
+  return this->mtype;
 }
 
 namespace shogi {

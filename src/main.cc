@@ -24,7 +24,7 @@ int main (int argc, char** argv)
   setlocale(LC_ALL, "");
 
   shogi::init_parser();
-
+  
   //gui = load_gui("data/gui.txt");
   
   /* read argv for multiplayer opt */

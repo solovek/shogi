@@ -33,20 +33,44 @@ static char* rmtrails (char* str)
 
 int shogi::parse(char* inp, Piece* ctx)
 {
-  int  mchno = -1; /* number of matched characters */
-  //int  match = -1; /* most probable match */
+  Piece* match;
+  int    matchcnt;
+  regmatch_t cmdmatch[3] = {0};
   char err = ERR_UNDEFINED;
-  char c;
-  int  i, j;
+  
+  if (!regexec(&regex, inp, 3, cmdmatch, 0)) {
+    char y, x;
+    matchcnt = 0;
+    
+    if (cmdmatch[1].rm_so != cmdmatch[1].rm_eo) {
+      char type = *inp++;
 
-  regmatch_t match[3] = {0};
+      for (int i = 0; i < 40; i++)
+	if (ctx[i].print() == type) {
+	  match = &ctx[i];
+	  matchcnt++;
+	}
+    } else if (cmdmatch[2].rm_so != cmdmatch[2].rm_eo) {
+      y = *inp++ - 'a';
+      x = *inp++ - '0';
 
-  if (!regexec(&regex, inp, 3, match, 0)) {
-    if (match[1].rm_so != match[1].rm_eo) {
-      /* search for piece then move it */
-    } else if (match[2].rm_so != match[2].rm_eo) {
-      err = opmove(inp + match[2].rm_so, ctx);
+      for (int i = 0; i < 40; i++)
+	if ((ctx[i].y() == y) &&
+	    (ctx[i].x() == x)) {
+	  match = &ctx[i];
+	  matchcnt++;
+	}
     }
+    
+    if (matchcnt < 1)
+      return ERR_NOPIECE;
+    else if (matchcnt > 1)
+      return ERR_AMBIGUOUS;
+
+    y = *inp++ - 'a';
+    x = *inp++ - '0';
+    
+    match->move(ctx, y, x);
   }
     
   /*
