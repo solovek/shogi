@@ -10,8 +10,9 @@ namespace shogi {
     ERR_INVALIDMV = -3,
     ERR_NOPIECE   = -4
   };
-  
-  char parse(char* input, Piece* context);
+
+  int init_parser();
+  int parse(char* input, Piece* context);
 }
 
 #endif /* PARSER_H */

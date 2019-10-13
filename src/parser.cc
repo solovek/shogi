@@ -1,5 +1,7 @@
 #include "parser.h"
 
+#include <ncurses.h>
+#include <regex.h>
 #include <stddef.h>
 #include <stdlib.h>
 
@@ -17,6 +19,8 @@ namespace shogi {
     {"move", 1, opmove},
     {  NULL, 0,   NULL}
   };
+  
+  regex_t regex;
 }
 /* remove trailing spaces */
 static char* rmtrails (char* str)
@@ -27,23 +31,35 @@ static char* rmtrails (char* str)
   return str;
 }
 
-char shogi::parse(char* inp, Piece* ctx)
+int shogi::parse(char* inp, Piece* ctx)
 {
   int  mchno = -1; /* number of matched characters */
-  int  match = -1; /* most probable match */
+  //int  match = -1; /* most probable match */
   char err = ERR_UNDEFINED;
   char c;
   int  i, j;
-  
+
+  regmatch_t match[3] = {0};
+
+  if (!regexec(&regex, inp, 3, match, 0)) {
+    if (match[1].rm_so != match[1].rm_eo) {
+      /* search for piece then move it */
+    } else if (match[2].rm_so != match[2].rm_eo) {
+      err = opmove(inp + match[2].rm_so, ctx);
+    }
+  }
+    
+  /*
   if (!inp || !ctx) {
     return 0;
   }
   
   inp = rmtrails(inp);
-  
+  */
   /* look through the syntax definitions for the
    * most probable match
    */
+  /*
   for (i = 0; syntax[i].verb; i++) {
     if (syntax[i].verb) { 
       for (j = 0;; inp++, j++) {
@@ -69,8 +85,15 @@ char shogi::parse(char* inp, Piece* ctx)
   
   if (match >= 0)
     err = syntax[match].op(rmtrails(inp + mchno), ctx);
+  */
   
   return err;
+}
+
+int shogi::init_parser()
+{
+  return regcomp(&regex, "^([:alpha:][a-i][0-8])|([a-i][0-8][a-i][0-8])",
+		 REG_ICASE | REG_EXTENDED);
 }
 
 static char shogi::opmove (char* inp, Piece* ctx)

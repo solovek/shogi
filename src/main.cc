@@ -23,6 +23,8 @@ int main (int argc, char** argv)
 
   setlocale(LC_ALL, "");
 
+  shogi::init_parser();
+
   //gui = load_gui("data/gui.txt");
   
   /* read argv for multiplayer opt */
@@ -79,6 +81,8 @@ int shogi_loop ()
 
     mvprintw(21, 0, "%d", shogi::parse(inp, pieces));
   }
+
+  return 0;
 }
 
 static void prngrid ()
