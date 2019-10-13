@@ -42,7 +42,7 @@ int main (int argc, char** argv)
   mvprintw(21, 20, "%s", player[0]);
   mvprintw( 0,  7, "%s", player[1]);
   */
-  mvprintw(0, 8, "1 2 3 4 5 6 7 8 9");
+  mvprintw(0, 8, "0 1 2 3 4 5 6 7 8");
   for (i = 0; i < 18; i += 2)
     mvaddch(i+2, 6, "abcdefghi"[i/2]);
 
