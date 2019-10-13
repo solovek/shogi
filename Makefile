@@ -1,4 +1,4 @@
-CC  = gcc
+CC  = g++
 EXE = shogi 
 OBJ = $(shell find . -name "*.cc")
 
