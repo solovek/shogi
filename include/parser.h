@@ -1,15 +1,17 @@
 #ifndef PARSER_H
 #define PARSER_H
 
-#include "pieces.h"
+#include "Piece.h"
 
 namespace shogi {
   enum {
     ERR_UNDEFINED = -1,
-    ERR_AMBIGUOUS = -2
+    ERR_AMBIGUOUS = -2,
+    ERR_INVALIDMV = -3,
+    ERR_NOPIECE   = -4
   };
   
-  int parse(char* input, Piece* context);
+  char parse(char* input, Piece* context);
 }
 
 #endif /* PARSER_H */

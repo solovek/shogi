@@ -7,7 +7,7 @@
 #include <string.h>
 #include <wchar.h>
 #include "parser.h"
-#include "pieces.h"
+#include "Piece.h"
 
 using namespace std;
 
@@ -42,9 +42,9 @@ int main (int argc, char** argv)
   mvprintw(21, 20, "%s", player[0]);
   mvprintw( 0,  7, "%s", player[1]);
   */
-  mvprintw(0, 8, "9 8 7 6 5 4 3 2 1");
+  mvprintw(0, 8, "1 2 3 4 5 6 7 8 9");
   for (i = 0; i < 18; i += 2)
-    mvaddch(i+2, 26, "abcdefghi"[i/2]);
+    mvaddch(i+2, 6, "abcdefghi"[i/2]);
 
   mvprintw(20, 0, ">");
   
@@ -62,7 +62,7 @@ static void update    ();
 int shogi_loop ()
 {
   shogi::Piece pieces[40] = {0};
-  shogi::Piece p = {0};
+  shogi::Piece p;
   char* inp;
   int i;
   
@@ -77,7 +77,7 @@ int shogi_loop ()
 
     mvgetnstr(20, 1, inp, 64);
 
-    shogi::parse(inp, pieces);
+    mvprintw(21, 0, "%d", shogi::parse(inp, pieces));
   }
 }
 
@@ -101,9 +101,8 @@ static void prnpieces (shogi::Piece* pieces)
   shogi::Piece p;
   
   for (int i = 0; i < 40; i++)
-    if ((p = pieces[i]).type)
-	mvwaddch(boardwnd, (p.y * 2) + 1, (p.x * 2) + 1,
-		 shogi::piece_types[p.type].tile);
+    if ((p = pieces[i]).exists())
+      mvwaddch(boardwnd, (p.y() * 2) + 1, (p.x() * 2) + 1, p.print());
 }
 
 static void update ()
@@ -112,35 +111,4 @@ static void update ()
   wrefresh(dropwnd[1]);
   wrefresh(boardwnd);    
   refresh();
-}
-
-namespace shogi {  
-  const PieceType piece_types[] = {
-    {'?', NULL}, {'p', pawn_valid_move}, {'l', NULL},
-    {'n', NULL}, {'s', NULL}, {'g', NULL},
-    {'b', NULL}, {'r', NULL}, {'k', NULL}
-  };
-
-  static bool within (int n, int lwr, int upr)
-  {
-    return ((lwr <= n) &&
-	    (upr >  n));
-  }
-
-  bool pawn_valid_move (Piece p, int y, int x)
-  {
-    /* bounds checking, maybe up */
-    if (within(y, 0, 9) &&
-	within(x, 0, 9)) {
-      if (x ==  p.x &&
-	  y == (p.y + 1)) {
-	/* check for a collision also */
-	p.y = y;
-	p.x = x;
-	return true;
-      }
-    }
-
-    return false;
-  }
 }

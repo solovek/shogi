@@ -1,82 +1,116 @@
 #include "parser.h"
 
 #include <stddef.h>
-#include <ncurses.h>
+#include <stdlib.h>
 
 namespace shogi {
 
-  static int opdrop (char*, Piece*);
-  static int opmove (char*, Piece*);
+  static char opdrop (char*, Piece*);
+  static char opmove (char*, Piece*);
   
   const struct {
     const char* verb;
     const char  req;
-    int (*op)(char*, Piece*);
+    char (*op)(char*, Piece*);
   } syntax[] = {
     {"drop", 2, opdrop},
     {"move", 1, opmove},
     {  NULL, 0,   NULL}
   };
+}
+/* remove trailing spaces */
+static char* rmtrails (char* str)
+{
+  if (str)
+    while (*str == ' ')
+      str++;
+  return str;
+}
+
+char shogi::parse(char* inp, Piece* ctx)
+{
+  int  mchno = -1; /* number of matched characters */
+  int  match = -1; /* most probable match */
+  char err = ERR_UNDEFINED;
+  char c;
+  int  i, j;
   
-  int parse(char* inp, Piece* ctx)
-  {
-    int  mchno = -1; /* number of matched characters */
-    int  match = -1; /* most probable match */
-    int  err   = ERR_UNDEFINED;
-    int  i, j;
-    char c;
-
-    if (!inp || !ctx) {
-      return 0;
-    }
-    
-    /* remove trailing spaces */
-    while (*inp == ' ')
-      inp++;
-
-    /* look through the syntax definitions for the
-     * most probable match
-     */
-    for (i = 0; syntax[i].verb; i++) {
-      if (syntax[i].verb) { 
-	for (j = 0;; inp++, j++) {
-	  c = *inp;
-
-	  if (c != syntax[i].verb[j]) {
-	    if (j == mchno) {
-	      match = -1;
-	      err   = ERR_AMBIGUOUS;
-	    } else if (j > mchno) {
-	      match = i;
-	      mchno = j;
-	      err   = 0;
-	    }
-	    
-	    break;
-	  }
-	}
+  if (!inp || !ctx) {
+    return 0;
+  }
+  
+  inp = rmtrails(inp);
+  
+  /* look through the syntax definitions for the
+   * most probable match
+   */
+  for (i = 0; syntax[i].verb; i++) {
+    if (syntax[i].verb) { 
+      for (j = 0;; inp++, j++) {
+	c = *inp;
 	
-	inp -= j;
+	if (c != syntax[i].verb[j]) {
+	  if (j == mchno) {
+	    match = -1;
+	    err   = ERR_AMBIGUOUS;
+	  } else if (j > mchno) {
+	    match = i;
+	    mchno = j;
+	    err   = 0;
+	  }
+	  
+	  break;
+	}
       }
+      
+      inp -= j;
     }
+  }
+  
+  if (match >= 0)
+    err = syntax[match].op(rmtrails(inp + mchno), ctx);
+  
+  return err;
+}
 
-    if (match >= 0)
-      err = syntax[match].op(inp + mchno, ctx);
+static char shogi::opmove (char* inp, Piece* ctx)
+{
+  Piece p;
+  char  y, x;
+  char  err = ERR_NOPIECE;
+  int   i;
 
+  /* make a more flexible version later */
+  y = inp[0] - 'a'; /* ebcdic a-i is contiguous, thank god */
+  x = inp[1] - '0'; 
+
+  for (i = 0; i < 40; i++) {
+    if ((ctx[i].y() == y) &&
+	(ctx[i].x() == x)) {
+      err = 0;
+      p = ctx[i];
+      break;
+    }
+  }
+
+  if (err)
     return err;
-  }
 
-  static int opmove (char* inp, Piece* ctx)
-  {
-    mvprintw(21, 0, "move");
-    
-    return 0;
-  }
+  inp += 2;
+  y = inp[0] - 'a';
+  x = inp[1] - '0';
 
-  static int opdrop (char* inp, Piece* ctx)
-  {
-    mvprintw(21, 0, "drop");
-    
-    return 0;
-  }
+  if (!p.move(ctx, y, x))
+    return ERR_INVALIDMV;
+
+  ctx[i] = p;
+  
+  return err;
+}
+
+static char shogi::opdrop (char* inp, Piece* ctx)
+{
+
+  
+  return 0;
 }
