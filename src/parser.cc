@@ -6,45 +6,55 @@
 #include <stdlib.h>
 
 namespace shogi {
+  extern const char* const expr;
   regex_t regex;
+}
+
+static bool originchk (shogi::Piece& p, char y, char x)
+{
+  return ((p.y() == y) &&
+	  (p.x() == x));
 }
 
 int shogi::parse(char* inp, Piece* ctx)
 {
   Piece* match;
-  int    matchcnt;
-  regmatch_t cmdmatch[3] = {0};
+  regmatch_t cmdmatch[4] = {0};
   char err = ERR_UNDEFINED;
   
-  if (!regexec(&regex, inp, 3, cmdmatch, 0)) {
+  if (!regexec(&regex, inp, 4, cmdmatch, 0)) {
+    bool has_origin = false;
+    bool has_promot = false;
+    char type;
+    char move;
     char y, x;
-    matchcnt = 0;
-    
-    if (cmdmatch[1].rm_so != cmdmatch[1].rm_eo) {
-      char type = *inp++;
+    int  cnt = 0;
 
-      for (int i = 0; i < 40; i++)
-	if (ctx[i].print() == type) {
-	  match = &ctx[i];
-	  matchcnt++;
-	}
-    } else if (cmdmatch[2].rm_so != cmdmatch[2].rm_eo) {
+    type = *inp++;
+    
+    if (cmdmatch[2].rm_so != cmdmatch[2].rm_eo) {
+      has_origin = true;
       y = *inp++ - 'a';
       x = *inp++ - '0';
-
-      for (int i = 0; i < 40; i++)
-	if ((ctx[i].y() == y) &&
-	    (ctx[i].x() == x)) {
-	  match = &ctx[i];
-	  matchcnt++;
-	}
     }
-    
-    if (matchcnt < 1)
-      return ERR_NOPIECE;
-    else if (matchcnt > 1)
-      return ERR_AMBIGUOUS;
 
+    move = *inp++;
+    
+    for (int i = 0; i < 40; i++)
+      if (ctx[i].print() == type) {
+	if (!has_origin ||
+	     has_origin &&
+	    originchk(ctx[i], y, x)) {
+	  match = &ctx[i];
+	  cnt++;
+	}
+      }
+    
+    if (cnt < 1)
+      return ERR_NOPIECE;
+    else if (cnt > 1)
+      return ERR_AMBIGUOUS;
+    
     y = *inp++ - 'a';
     x = *inp++ - '0';
     
@@ -54,8 +64,10 @@ int shogi::parse(char* inp, Piece* ctx)
   return err;
 }
 
+const char* const shogi::expr =
+  "^([:alpha:])([a-i][0-8]){,1}([-x*][a-i][0-8])([+]){,1}$";
+
 int shogi::init_parser()
 {
-  return regcomp(&regex, "^([:alpha:][a-i][0-8])|([a-i][0-8][a-i][0-8])",
-		 REG_ICASE | REG_EXTENDED);
+  return regcomp(&regex, expr, REG_ICASE | REG_EXTENDED);
 }
