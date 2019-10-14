@@ -1,6 +1,7 @@
 CC  = g++
 EXE = shogi 
-OBJ = $(shell find . -name "*.cc")
+SRC = $(shell find . -name "*.cc")
+OBJ = $(addsuffix .o,$(basename $(SRC)))
 
 DEP = ncursesw
 
@@ -8,11 +9,20 @@ CFLAG = `pkg-config $(DEP) --cflags`
 LFLAG = `pkg-config $(DEP) --libs`
 INCL  = -Iinclude
 
-all:
-	$(CC) -o $(EXE) $(OBJ) $(CFLAG) $(INCL) $(LFLAG)
+.SUFFIXES: .cc .o .pdf .tex
+.PHONY: all test
+
+.cc.o:
+	$(CC) -c -o $@ $< $(CFLAG) $(INCL)
+
+.tex.pdf:
+	pdflatex $<
+
+all: shogi report.pdf
+
+shogi: $(OBJ)
+	$(CC) -o $(EXE) $(OBJ) $(LFLAG)
 
 test: all
 	./shogi
 
-report: 
-	pdflatex report.tex
