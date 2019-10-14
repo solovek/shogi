@@ -23,6 +23,6 @@ all: shogi report.pdf
 shogi: $(OBJ)
 	$(CC) -o $(EXE) $(OBJ) $(LFLAG)
 
-test: all
+test: shogi
 	./shogi
 
