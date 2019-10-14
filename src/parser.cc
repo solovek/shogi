@@ -9,15 +9,6 @@ namespace shogi {
   regex_t regex;
 }
 
-/* remove trailing spaces */
-static char* rmtrails (char* str)
-{
-  if (str)
-    while (*str == ' ')
-      str++;
-  return str;
-}
-
 int shogi::parse(char* inp, Piece* ctx)
 {
   Piece* match;
