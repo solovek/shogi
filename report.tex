@@ -19,28 +19,51 @@
 \begin{document}
 \maketitle
 
-\begin{abstract}
-\end{abstract}
+%\begin{abstract}
+%\end{abstract}
 
 \begin{resumo}
-  escreva-me
+  O presente artigo é uma descrição de uma implementação em c++ do clássico jogo shogi, utilizando o protocolo TCP para passagem de mensagens e um modelo peer to peer.
 \end{resumo}
 
-\newpage
+\section{Introduction}
+Shogi é uma das variações do jogo chaturanga, do qual o xadrez também é uma variação. É jogado em um tabuleiro 9x9 e notável pelas peças capturadas serem realmente capturadas, no sentido de que o jogador que as capturou pode num momento futuro botar as peças novamente no tabuleiro.\\
+
 \section{Protocolo}
-\centering
-\includestandalone{state-machine}
+\begin{center}
+  \includestandalone{state-machine}
+\end{center}
 
 \section{Mensagens}
-\begin{itemize}
-\item b[board]: host envia posição das peças ao outro jogador;
-\item mv[yx][yx]: descreve ao outro jogador que deve checar a sua validade o movimento desejado;
-\item dp[p][yx]: jogador põe uma peça "p" no tabuleiro;
-\item invalid: informa ao outro jogador que a última jogada recebida é inválida;
-\item connect: jogador pede pra se conectar ao host;
-\item resign: jogador concede a vitória (também usado quando há cheque mate).
-\end{itemize}
+As mensagens de movimento tomam a forma \{mP(yx)?[-*x](yx)+?\} onde 'm' faz alusão a "movimento", P denota a peça a ser movida, o primeiro (yx) as coordenadas de origem (opcional), seguido do tipo de movimento, as coordenadas de destino e (caso haja promoção da peça) um '+'.\\
+      
+\begin{table}[h!]
+  \begin{center}
+    \begin{tabular}{l|c}
+      \textbf{Movimento} & \textbf{Significado}\\
+      \hline
+      -   & Move peça do tabuleiro pra posição indicada.\\
+      $*$ & Move peça da mão pro tabuleiro na posição indicada.\\
+      x   & Captura peça do adversário na posição indicada.\\
+    \end{tabular}
+  \end{center}
+\end{table}
 
+\begin{table}[h!]
+  \begin{center}
+    \begin{tabular}{l|c}
+      \textbf{Mensagem} & \textbf{Significado}\\
+      \hline
+      f  & Anuncia pra rede que quer jogar.\\
+      rq & Envia um match request prum jogador que tenha se anunciado.\\
+      b[f][BOARD] & Se f, BOARD contém uma lista de peças, caso contrário utiliza-se a forma padrão.\\
+      rs & Desiste do jogo.\\
+      rm & Pede rematch (ou aceita o rematch, quando enviado em resposta a outro rm).\\
+    \end{tabular}
+  \end{center}
+\end{table}
+
+      
 \bibliographystyle{sbc}
 \bibliography{sbc-template}
 
