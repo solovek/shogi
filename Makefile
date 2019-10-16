@@ -10,7 +10,7 @@ LFLAG = `pkg-config $(DEP) --libs`
 INCL  = -Iinclude
 
 .SUFFIXES: .cc .o .pdf .tex
-.PHONY: all test
+.PHONY: all test clean
 
 .cc.o:
 	$(CC) -c -o $@ $< $(CFLAG) $(INCL)
@@ -20,9 +20,11 @@ INCL  = -Iinclude
 
 all: shogi report.pdf
 
+clean:
+	rm $(OBJ) $(EXE)
+
 shogi: $(OBJ)
 	$(CC) -o $(EXE) $(OBJ) $(LFLAG)
 
 test: shogi
 	./shogi
-
