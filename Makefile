@@ -3,7 +3,7 @@ EXE = shogi
 SRC = $(shell find . -name "*.cc")
 OBJ = $(addsuffix .o,$(basename $(SRC)))
 
-DEP = ncursesw
+DEP = ncurses
 
 CFLAG = `pkg-config $(DEP) --cflags`
 LFLAG = `pkg-config $(DEP) --libs`

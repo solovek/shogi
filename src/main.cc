@@ -94,7 +94,7 @@ static void prngrid ()
   
   for (int i = 1; i < 18; i++) {
     for (int j = 1; j < 18; j++) {      
-      mvwaddwstr(boardwnd, i, j, grid[i % 2? (j % 2? 0 : 1) :
+      mvwaddch(boardwnd, i, j, " |-+"[i % 2? (j % 2? 0 : 1) :
 				             (j % 2? 2 : 3)]);
     }
   }
